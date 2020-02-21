@@ -18,9 +18,11 @@ void process_alignment(bam1_t *b, bam_hdr_t *hdr, FILE *of, int length) {
         if(op != 4 || op_len < length) {
             if(bam_cigar_type(op)&2) pos += op_len;
             if(bam_cigar_type(op)&1) apos += op_len;
-        } else {
+	} else {
             //fprintf(of, "@%s:%"PRId32"\n", hdr->target_name[b->core.tid], pos);
-            if(bam_cigar_type(op)&1) apos += op_len;
+            if (op == 4){
+            	if(bam_cigar_type(op)&1) apos += op_len;
+            }
             fprintf(of, "@%s:%s:%"PRId32"\n", bam_get_qname(b), hdr->target_name[b->core.tid], pos);
             for(j=0; j < op_len; j++) {
                 fprintf(of, "%c", int2char[bam_seqi(bam_get_seq(b), j+apos)]);
